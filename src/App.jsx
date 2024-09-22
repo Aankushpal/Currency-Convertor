@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import InpotBox from './components/InpotBox'
 import useCurrencyInfo from './hooks/useCurrencyInfo'
 
 const App = () => {
   
-  const [amount, setAmount] = useState()
+  const [amount, setAmount] = useState(0)
   const [fromCurrency, setFromCurrency] = useState('inr') // we are setting the default currency to USD and use the setFromCurrency function to change the currency
   const [toCurrency, setToCurrency] = useState('usd') // we are setting the default currency to INR and use the setToCurrency function to change the currency
-  const [covertedAmount, setCovertedAmount] = useState()
+  const [covertedAmount, setCovertedAmount] = useState(0)
 
   const currencyInfo = useCurrencyInfo(fromCurrency)
 
@@ -20,9 +20,13 @@ const App = () => {
     setAmount(covertedAmount)
   }
 
-    const convert = () => {
-      setCovertedAmount((amount * currencyInfo[toCurrency])) // we are converting the amount to the selected currency by multiplying the amount with the currency rate
-    }
+  // const convert = () => { 
+  //   setCovertedAmount((amount * currencyInfo[toCurrency])) // we are converting the amount to the selected currency by multiplying the amount with the currency rate
+  // }
+
+    useEffect(() => {
+        setCovertedAmount((amount * currencyInfo[toCurrency])) // we are converting the amount to the selected currency by multiplying the amount with the currency rate
+    }, [amount, currencyInfo])
 
   return (
     <>
@@ -55,7 +59,7 @@ const App = () => {
                 <button
                   onClick={swap}
                   type="button"
-                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md bg-blue-600 text-white px-2 py-0.5"
+                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-white bg-blue-600 text-white px-2 text-xl py-0.5"
 
                 >
                   swap
@@ -72,12 +76,12 @@ const App = () => {
                 />
               </div>
 
-              <button
+              {/* <button
               type="submit" 
               onClick={convert}
               className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg">
                 Convert {fromCurrency.toUpperCase()} to {toCurrency.toUpperCase()}
-              </button>
+              </button> */}
             </form>
           </div>
         </div>

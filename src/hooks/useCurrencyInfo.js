@@ -10,10 +10,10 @@ function useCurrencyInfo(currency) {
             .then((res) => res.json())
             .then((res) => setData(res[currency])) // we use square brackets instead of dot notation to access the object property 
 
-        console.log(data)
+        // console.log(data)
     }, [currency, data]) //This array is the dependency array, it means when the value of the variable in the array changes, the useEffect will run again
 
-    console.log(data)
+    // console.log(data)
     return data
 }
 

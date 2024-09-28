@@ -11,7 +11,7 @@ const App = () => {
 
   const currencyInfo = useCurrencyInfo(fromCurrency)
 
-  const options = Object.keys(currencyInfo)
+  const options = Object.keys(currencyInfo) // here we are getting the keys of the currencyInfo object and storing it in the options array
 
   const swap = () => {
     setFromCurrency(toCurrency)

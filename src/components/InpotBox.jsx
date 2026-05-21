@@ -1,52 +1,81 @@
 import React, { useId } from 'react'
 
-function InpotBox({  
-    label,
-    amount,
-    onAmountChange,
-    onCurrencyChange,
-    currencyOptions = [],
-    selectCurrency,
-    className = "",
+function InpotBox({
+  label,
+  amount,
+  onAmountChange,
+  onCurrencyChange,
+  currencyOptions = [],
+  selectCurrency,
+  className = '',
 }) {
-
-    const amountInputId = useId() // we are using the useId hook to generate a unique id for the input field
+  const amountInputId = useId()
 
   return (
-    <>
-          <div className={`p-2 overflow-hidden rounded-lg text-sm flex ${className}`}>
-            <div className="w-1/2 border-t-2 border-l-2 border-b-2 border-white pl-2">
-                <label  htmlFor= {amountInputId} className="text-gray-100 mb-2 inline-block">
-                    {label}
-                </label>
-                <input
-                    id={amountInputId}         
-                    className="outline-none w-full bg-transparent py-1.5 text-gray-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
-                    type="number"
-                    placeholder="Amount"
-                    value={amount}
-                    onChange={(e) => onAmountChange && onAmountChange(Number(e.target.value))} // we checked if onAmountChange is passed then we call it with the new value and use Number function bcoz a event value(e.target.value) is always a string
-                />
-            </div>
-            <div className="w-1/2 flex flex-wrap justify-end pr-2 pb-2 text-right border-t-2 border-r-2 border-b-2 border-white">
-                <p className="text-gray-100 mb-2 mt-1 w-full">Currency Type</p>
-                <select
-                    className="rounded-lg px-1 py-1 bg-gray-100 cursor-pointer outline-none"
-                    value={selectCurrency}
-                    onChange={(e) => onCurrencyChange && onCurrencyChange(e.target.value)} // we checked if onCurrencyChange is passed then we call it with the new value 
-                >
-                    
-                    {currencyOptions.map((currency) => (
-                            <option key={currency} value={currency}>
-                            {currency}
-                            </option>
-                        ))}
-                
-                </select>
-            </div>
-        </div>
+    <div
+      className={`
+        flex overflow-hidden rounded-xl
+        border border-border-light dark:border-dark-border
+        bg-surface dark:bg-dark-surface
+        ${className}
+      `}
+    >
+      {/* Amount side */}
+      <div className="flex-1 flex flex-col justify-center px-4 py-3 border-r border-border-light dark:border-dark-border">
+        <label
+          htmlFor={amountInputId}
+          className="text-xs font-semibold uppercase tracking-wider text-txt-secondary dark:text-dark-muted mb-1 select-none"
+        >
+          {label}
+        </label>
+        <input
+          id={amountInputId}
+          type="number"
+          placeholder="0.00"
+          value={amount}
+          onChange={(e) =>
+            onAmountChange && onAmountChange(Number(e.target.value))
+          }
+          disabled={!onAmountChange}
+          aria-label={`${label} amount`}
+          className="
+            w-full bg-transparent outline-none
+            text-lg font-semibold
+            text-txt-primary dark:text-dark-txt
+            placeholder-txt-secondary/50 dark:placeholder-dark-muted/50
+            disabled:cursor-not-allowed disabled:opacity-70
+          "
+        />
+      </div>
 
-    </>
+      {/* Currency selector side */}
+      <div className="flex flex-col justify-center items-end px-4 py-3 min-w-[110px]">
+        <span className="text-xs font-semibold uppercase tracking-wider text-txt-secondary dark:text-dark-muted mb-1 select-none">
+          Currency
+        </span>
+        <select
+          value={selectCurrency}
+          onChange={(e) =>
+            onCurrencyChange && onCurrencyChange(e.target.value)
+          }
+          aria-label={`${label} currency`}
+          className="
+            rounded-lg px-2 py-1.5 text-sm font-medium
+            bg-surface-muted dark:bg-dark-bg
+            text-txt-primary dark:text-dark-txt
+            border border-border-light dark:border-dark-border
+            outline-none cursor-pointer
+            focus-visible:ring-2 focus-visible:ring-brand
+          "
+        >
+          {currencyOptions.map((currency) => (
+            <option key={currency} value={currency}>
+              {currency.toUpperCase()}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
   )
 }
 

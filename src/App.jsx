@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import InpotBox from './components/InpotBox'
+import Navbar from './components/Navbar'
 import useCurrencyInfo from './hooks/useCurrencyInfo'
+import useTheme from './hooks/useTheme'
 
 const App = () => {
-  
+  const { theme, toggleTheme } = useTheme()
+
   const [amount, setAmount] = useState(0)
-  const [fromCurrency, setFromCurrency] = useState('inr') // we are setting the default currency to USD and use the setFromCurrency function to change the currency
-  const [toCurrency, setToCurrency] = useState('usd') // we are setting the default currency to INR and use the setToCurrency function to change the currency
+  const [fromCurrency, setFromCurrency] = useState('inr')
+  const [toCurrency, setToCurrency] = useState('usd')
   const [covertedAmount, setCovertedAmount] = useState(0)
 
   const currencyInfo = useCurrencyInfo(fromCurrency)
-
-  const options = Object.keys(currencyInfo) // here we are getting the keys of the currencyInfo object and storing it in the options array
+  const options = Object.keys(currencyInfo)
 
   const swap = () => {
     setFromCurrency(toCurrency)
@@ -20,30 +22,56 @@ const App = () => {
     setAmount(covertedAmount)
   }
 
-  // const convert = () => { 
-  //   setCovertedAmount((amount * currencyInfo[toCurrency])) // we are converting the amount to the selected currency by multiplying the amount with the currency rate
-  // }
-
-    useEffect(() => {
-        setCovertedAmount((amount * currencyInfo[toCurrency])) // we are converting the amount to the selected currency by multiplying the amount with the currency rate
-    }, [amount, currencyInfo])
+  useEffect(() => {
+    setCovertedAmount(amount * (currencyInfo[toCurrency] ?? 0))
+  }, [amount, currencyInfo, toCurrency])
 
   return (
-    <>
-      <div
-        className="w-full h-screen flex flex-wrap justify-end pr-80 items-center bg-cover bg-no-repeat"
+    <div className="min-h-screen bg-surface-muted dark:bg-dark-bg text-txt-primary dark:text-dark-txt">
+      <Navbar theme={theme} toggleTheme={toggleTheme} />
+
+      {/* Full-screen converter section */}
+      <main
+        className="relative w-full min-h-screen flex items-center justify-center pt-14 px-4"
         style={{
           backgroundImage: `url('https://images.pexels.com/photos/128867/coins-currency-investment-insurance-128867.jpeg')`,
           backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
         }}
+        aria-label="Currency converter"
       >
-        <div className="w-auto rounded-lg ">
-          <div className="w-full max-w-md mx-auto border overflow-hidden border-gray-60 rounded-lg p-5 backdrop-blur-sm bg-[#888]">
+        {/* Overlay — lighter in light mode, deeper in dark mode */}
+        <div
+          className="absolute inset-0 bg-white/40 dark:bg-dark-bg/70"
+          aria-hidden="true"
+        />
+
+        {/* Converter card */}
+        <div className="relative z-10 w-full max-w-md">
+          {/* Card header */}
+          <div className="mb-4 text-center">
+            <h1 className="text-2xl font-bold text-txt-primary dark:text-dark-txt drop-shadow">
+              Currency Converter
+            </h1>
+            <p className="text-sm text-txt-secondary dark:text-dark-muted mt-1">
+              Real-time exchange rates
+            </p>
+          </div>
+
+          {/* Card body */}
+          <div
+            className="
+              rounded-2xl p-6
+              bg-white/85 dark:bg-dark-card/90
+              backdrop-blur-md
+              border border-border-light dark:border-dark-border
+              shadow-xl
+            "
+          >
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                convert();
-              }}
+              onSubmit={(e) => e.preventDefault()}
+              aria-label="Currency conversion form"
             >
               <div className="w-full mb-1">
                 <InpotBox
@@ -55,38 +83,55 @@ const App = () => {
                   onAmountChange={(value) => setAmount(value)}
                 />
               </div>
-              <div className="relative w-full h-0.5">
+
+              {/* Swap button */}
+              <div className="relative w-full h-0.5 my-3">
                 <button
                   onClick={swap}
                   type="button"
-                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-white bg-blue-600 text-white px-2 text-xl py-0.5"
-
+                  aria-label="Swap currencies"
+                  className="
+                    absolute left-1/2 -translate-x-1/2 -translate-y-1/2
+                    rounded-full px-4 py-1 text-sm font-semibold
+                    border-2 border-white dark:border-dark-border
+                    bg-brand hover:bg-brand-hover
+                    text-white
+                    shadow-md
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2
+                    cursor-pointer
+                  "
                 >
-                  swap
+                  ⇅ Swap
                 </button>
               </div>
-              <div className="w-full mt-1 mb-4">
+
+              <div className="w-full mt-1 mb-2">
                 <InpotBox
                   label="To"
                   amount={covertedAmount}
                   currencyOptions={options}
                   onCurrencyChange={(currency) => setToCurrency(currency)}
                   selectCurrency={toCurrency}
-                 
                 />
               </div>
 
-              {/* <button
-              type="submit" 
-              onClick={convert}
-              className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg">
-                Convert {fromCurrency.toUpperCase()} to {toCurrency.toUpperCase()}
-              </button> */}
+              {/* Result line */}
+              {amount > 0 && covertedAmount > 0 && (
+                <p className="text-center text-xs text-txt-secondary dark:text-dark-muted mt-3">
+                  <span className="font-semibold text-txt-primary dark:text-dark-txt">
+                    {amount.toLocaleString()} {fromCurrency.toUpperCase()}
+                  </span>
+                  {' = '}
+                  <span className="font-semibold text-brand">
+                    {covertedAmount.toFixed(4)} {toCurrency.toUpperCase()}
+                  </span>
+                </p>
+              )}
             </form>
           </div>
         </div>
-      </div>
-    </>
+      </main>
+    </div>
   )
 }
 

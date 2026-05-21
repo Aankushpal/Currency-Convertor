@@ -4,12 +4,54 @@
 
 * {
   box-sizing: border-box;
-  margin: 0%;
-  padding: 0%;
+  margin: 0;
+  padding: 0;
 }
 
-html,body {
+html,
+body {
   font-family: 'Roboto', sans-serif;
   width: 100%;
   height: 100%;
+  /* Smooth global color transitions for theme switching */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Smooth transitions on all interactive/themed elements */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-duration: 0.25s;
+  transition-timing-function: ease;
+}
+
+/* ---- Light theme scrollbar ---- */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f4f6f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+/* ---- Dark theme scrollbar ---- */
+.dark ::-webkit-scrollbar-track {
+  background: #1a1d27;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #2e3347;
+}
+
+/* Remove number input spinners */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
 }
